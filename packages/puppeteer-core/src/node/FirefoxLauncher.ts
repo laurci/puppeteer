@@ -1,6 +1,3 @@
-import fs from 'fs';
-import os from 'os';
-import path from 'path';
 import {Browser} from '../api/Browser.js';
 import {Browser as BiDiBrowser} from '../common/bidi/Browser.js';
 import {CDPBrowser} from '../common/Browser.js';
@@ -83,7 +80,7 @@ export class FirefoxLauncher extends ProductLauncher {
 
     if (profileArgIndex !== -1) {
       userDataDir = firefoxArguments[profileArgIndex + 1];
-      if (!userDataDir || !fs.existsSync(userDataDir)) {
+      if (!userDataDir) {
         throw new Error(`Firefox profile not found at '${userDataDir}'`);
       }
 
@@ -210,8 +207,9 @@ export class FirefoxLauncher extends ProductLauncher {
     } = options;
 
     const firefoxArguments = ['--no-remote'];
+    const platform = 'win32' as string;
 
-    switch (os.platform()) {
+    switch (platform) {
       case 'darwin':
         firefoxArguments.push('--foreground');
         break;
@@ -461,30 +459,14 @@ export class FirefoxLauncher extends ProductLauncher {
    * @param profilePath - Firefox profile to write the preferences to.
    */
   async writePreferences(
-    prefs: {[x: string]: unknown},
-    profilePath: string
+    _prefs: {[x: string]: unknown},
+    _profilePath: string
   ): Promise<void> {
-    const lines = Object.entries(prefs).map(([key, value]) => {
-      return `user_pref(${JSON.stringify(key)}, ${JSON.stringify(value)});`;
-    });
-
-    await fs.promises.writeFile(
-      path.join(profilePath, 'user.js'),
-      lines.join('\n')
-    );
-
     // Create a backup of the preferences file if it already exitsts.
-    const prefsPath = path.join(profilePath, 'prefs.js');
-    if (fs.existsSync(prefsPath)) {
-      const prefsBackupPath = path.join(profilePath, 'prefs.js.puppeteer');
-      await fs.promises.copyFile(prefsPath, prefsBackupPath);
-    }
   }
 
   async _createProfile(extraPrefs: {[x: string]: unknown}): Promise<string> {
-    const temporaryProfilePath = await fs.promises.mkdtemp(
-      this.getProfilePath()
-    );
+    const temporaryProfilePath = this.getProfilePath();
 
     const prefs = this.defaultPreferences(extraPrefs);
     await this.writePreferences(prefs, temporaryProfilePath);

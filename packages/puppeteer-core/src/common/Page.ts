@@ -80,7 +80,6 @@ import {
   getExceptionMessage,
   getReadableAsBuffer,
   getReadableFromProtocolStream,
-  importFS,
   isNumber,
   isString,
   pageBindingDeliverErrorString,
@@ -2598,8 +2597,6 @@ export class CDPPage extends Page {
 
     if (options.path) {
       try {
-        const fs = (await importFS()).promises;
-        await fs.writeFile(options.path, buffer);
       } catch (error) {
         if (error instanceof TypeError) {
           throw new Error(

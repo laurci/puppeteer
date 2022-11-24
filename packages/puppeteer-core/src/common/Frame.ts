@@ -33,7 +33,6 @@ import {LifecycleWatcher, PuppeteerLifeCycleEvent} from './LifecycleWatcher.js';
 import {Page} from '../api/Page.js';
 import {getQueryHandlerAndSelector} from './QueryHandler.js';
 import {EvaluateFunc, HandleFor, NodeFor} from './types.js';
-import {importFS} from './util.js';
 
 /**
  * @public
@@ -775,9 +774,7 @@ export class Frame {
     }
 
     if (path) {
-      let fs;
       try {
-        fs = (await import('fs')).promises;
       } catch (error) {
         if (error instanceof TypeError) {
           throw new Error(
@@ -786,7 +783,7 @@ export class Frame {
         }
         throw error;
       }
-      content = await fs.readFile(path, 'utf8');
+      content = '';
       content += `//# sourceURL=${path.replace(/\n/g, '')}`;
     }
 
@@ -858,9 +855,7 @@ export class Frame {
     }
 
     if (path) {
-      let fs: typeof import('fs').promises;
       try {
-        fs = (await importFS()).promises;
       } catch (error) {
         if (error instanceof TypeError) {
           throw new Error(
@@ -870,7 +865,7 @@ export class Frame {
         throw error;
       }
 
-      content = await fs.readFile(path, 'utf8');
+      content = '';
       content += '/*# sourceURL=' + path.replace(/\n/g, '') + '*/';
       options.content = content;
     }

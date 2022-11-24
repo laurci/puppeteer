@@ -1,7 +1,3 @@
-import {accessSync} from 'fs';
-import {mkdtemp} from 'fs/promises';
-import os from 'os';
-import path from 'path';
 import {CDPBrowser} from '../common/Browser.js';
 import {assert} from '../util/assert.js';
 import {BrowserRunner} from './BrowserRunner.js';
@@ -81,9 +77,7 @@ export class ChromeLauncher extends ProductLauncher {
     });
     if (userDataDirIndex < 0) {
       isTempUserDataDir = true;
-      chromeArguments.push(
-        `--user-data-dir=${await mkdtemp(this.getProfilePath())}`
-      );
+      chromeArguments.push(`--user-data-dir=`);
       userDataDirIndex = chromeArguments.length - 1;
     }
 
@@ -197,7 +191,7 @@ export class ChromeLauncher extends ProductLauncher {
       userDataDir,
     } = options;
     if (userDataDir) {
-      chromeArguments.push(`--user-data-dir=${path.resolve(userDataDir)}`);
+      chromeArguments.push(`--user-data-dir=`);
     }
     if (devtools) {
       chromeArguments.push('--auto-open-devtools-for-tabs');
@@ -232,7 +226,7 @@ export class ChromeLauncher extends ProductLauncher {
    * @internal
    */
   #executablePathForChannel(channel: ChromeReleaseChannel): string {
-    const platform = os.platform();
+    const platform = 'win32' as string;
 
     let chromePath: string | undefined;
     switch (platform) {
@@ -295,7 +289,7 @@ export class ChromeLauncher extends ProductLauncher {
 
     // Check if Chrome exists and is accessible.
     try {
-      accessSync(chromePath);
+      // do nothing
     } catch (error) {
       throw new Error(
         `Could not find Google Chrome executable for channel '${channel}' at '${chromePath}'.`

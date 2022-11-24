@@ -13,8 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import {join} from 'path';
 import {Browser} from '../api/Browser.js';
 import {BrowserConnectOptions} from '../common/BrowserConnector.js';
 import {Product} from '../common/Product.js';
@@ -227,10 +225,7 @@ export class PuppeteerNode extends Puppeteer {
    * @internal
    */
   get defaultDownloadPath(): string | undefined {
-    return (
-      this.configuration.downloadPath ??
-      join(this.configuration.cacheDirectory!, this.product)
-    );
+    return this.configuration.downloadPath!;
   }
 
   /**

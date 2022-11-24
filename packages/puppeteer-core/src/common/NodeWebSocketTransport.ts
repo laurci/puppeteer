@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import NodeWebSocket from 'ws';
 import {ConnectionTransport} from '../common/ConnectionTransport.js';
 import {packageVersion} from '../generated/version.js';
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires, no-restricted-syntax
+const NodeWebSocket = (globalThis.WebSocket as any) ?? require('ws')?.default;
 
 /**
  * @internal
@@ -39,13 +41,13 @@ export class NodeWebSocketTransport implements ConnectionTransport {
     });
   }
 
-  #ws: NodeWebSocket;
-  onmessage?: (message: NodeWebSocket.Data) => void;
+  #ws: typeof NodeWebSocket;
+  onmessage?: (message: typeof NodeWebSocket.Data) => void;
   onclose?: () => void;
 
-  constructor(ws: NodeWebSocket) {
+  constructor(ws: typeof NodeWebSocket) {
     this.#ws = ws;
-    this.#ws.addEventListener('message', event => {
+    this.#ws.addEventListener('message', (event: any) => {
       if (this.onmessage) {
         this.onmessage.call(null, event.data);
       }

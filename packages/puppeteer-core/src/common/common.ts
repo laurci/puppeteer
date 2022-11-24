@@ -49,7 +49,6 @@ export * from './LazyArg.js';
 export * from './LifecycleWatcher.js';
 export * from './NetworkEventManager.js';
 export * from './NetworkManager.js';
-export * from './NodeWebSocketTransport.js';
 export * from './Page.js';
 export * from './PDFOptions.js';
 export * from './PredefinedNetworkConditions.js';

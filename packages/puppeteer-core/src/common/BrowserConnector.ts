@@ -16,7 +16,6 @@
 
 import {debugError} from './util.js';
 import {isErrorLike} from '../util/ErrorLike.js';
-import {isNode} from '../environment.js';
 import {assert} from '../util/assert.js';
 import {IsPageTargetCallback, TargetFilterCallback} from '../api/Browser.js';
 import {CDPBrowser} from './Browser.js';
@@ -24,6 +23,7 @@ import {Connection} from './Connection.js';
 import {ConnectionTransport} from './ConnectionTransport.js';
 import {getFetch} from './fetch.js';
 import {Viewport} from './PuppeteerViewport.js';
+import {BrowserWebSocketTransport} from './BrowserWebSocketTransport.js';
 /**
  * Generic browser options that can be passed when launching any browser or when
  * connecting to an existing browser instance.
@@ -60,10 +60,7 @@ export interface BrowserConnectOptions {
 }
 
 const getWebSocketTransportClass = async () => {
-  return isNode
-    ? (await import('./NodeWebSocketTransport.js')).NodeWebSocketTransport
-    : (await import('./BrowserWebSocketTransport.js'))
-        .BrowserWebSocketTransport;
+  return BrowserWebSocketTransport;
 };
 
 /**
